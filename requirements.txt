@@ -5,6 +5,6 @@ mplfinance
 yfinance 
 pandas
 nselib
-sklearn
+scikit-learn
 
 
