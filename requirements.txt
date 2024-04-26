@@ -4,9 +4,7 @@ matplotlib
 mplfinance
 yfinance 
 pandas
-re
 nselib
-datetime
 sklearn
 
 
