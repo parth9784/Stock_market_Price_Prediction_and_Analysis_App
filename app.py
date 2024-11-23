@@ -495,8 +495,6 @@ def main():
             st.write(f"{stock} - Current Price: ₹{curr_price}, Previous Day Close: {prev_close}")
         else:
             st.write(f"{stock} - Data Not Available")
-
-
 if __name__ == '__main__':
     main()
 
