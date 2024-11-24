@@ -395,7 +395,7 @@ def main():
         st.subheader('Stock Price Visuals')
 
         fig, axs = plt.subplots(4, 1, figsize=(10, 20))
-
+        
         # Low Price
         axs[0].plot(stock_data['Low'], label='Low', color='blue')
         axs[0].set_title('Low Price')
@@ -430,6 +430,8 @@ def main():
 
         plt.tight_layout()
         st.pyplot(fig)
+        st.set_option('deprecation.showPyplotGlobalUse', False)
+
 
 
 if __name__ == '__main__':
