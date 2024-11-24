@@ -275,6 +275,64 @@ def fetch_news():
 
 # st.set_option('deprecation.showPyplotGlobalUse', False)
 
+# def predict_stock_price(company_name, df):
+#     symbol = df.loc[df['NAME OF COMPANY'] == company_name, 'SYMBOL'].values
+#     if len(symbol) == 0:
+#         st.error("Company not found. Please enter a valid company name.")
+#         return
+
+#     name_com = symbol[0] + ".NS"
+#     try:
+#         tick = yf.Ticker(name_com)
+#         historical_data = tick.history(period="1y")
+#     except Exception as e:
+#         st.error(f"Error fetching data: {e}")
+#         return
+
+#     if historical_data.empty:
+#         st.error("No historical data found for the specified company.")
+#         return
+
+#     historical_data['Previous Close'] = historical_data['Close'].shift(1)
+#     historical_data.dropna(inplace=True)
+
+#     X = historical_data[['Previous Close']]
+#     y = historical_data['Close']
+
+#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+#     model = RandomForestRegressor(n_estimators=100, random_state=42)
+#     model.fit(X_train, y_train)
+
+#     y_pred = model.predict(X_test)
+
+#     r2 = r2_score(y_test, y_pred)
+
+#     future_data = historical_data[['Previous Close']].iloc[-1].values.reshape(1, -1)
+#     future_price_prediction = model.predict(future_data)[0]
+
+#     accuracy_percentage = r2 * 100
+
+#     if future_price_prediction > historical_data['Close'].iloc[-1]:
+#         investment_suggestion = "It is suggested to consider investing in the stock."
+#     else:
+#         investment_suggestion = "It is suggested to not invest in the stock."
+
+
+#     plt.figure(figsize=(10, 6))
+#     plt.plot(historical_data.index, historical_data['Close'], label='Historical Closing Prices')
+#     plt.axvline(x=historical_data.index[-1], color='r', linestyle='--', linewidth=1, label='End of Historical Data')
+#     plt.axhline(y=future_price_prediction, color='g', linestyle='--', linewidth=1, label='Predicted Future Price')
+#     plt.xlabel('Date')
+#     plt.ylabel('Closing Price')
+#     plt.title('Historical Closing Prices and Predicted Future Price')
+#     plt.legend()
+#     plt.grid(True)
+#     st.pyplot()
+
+#     st.write(f"Predicted Future Price: {future_price_prediction}")
+#     st.write(f"Accuracy of the model: {accuracy_percentage:.2f}%")
+#     st.write(investment_suggestion)
 def predict_stock_price(company_name, df):
     symbol = df.loc[df['NAME OF COMPANY'] == company_name, 'SYMBOL'].values
     if len(symbol) == 0:
@@ -293,6 +351,7 @@ def predict_stock_price(company_name, df):
         st.error("No historical data found for the specified company.")
         return
 
+    # Prepare the data
     historical_data['Previous Close'] = historical_data['Close'].shift(1)
     historical_data.dropna(inplace=True)
 
@@ -301,39 +360,44 @@ def predict_stock_price(company_name, df):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+    # Train the model
     model = RandomForestRegressor(n_estimators=100, random_state=42)
     model.fit(X_train, y_train)
 
+    # Test the model
     y_pred = model.predict(X_test)
-
     r2 = r2_score(y_test, y_pred)
 
+    # Predict future price
     future_data = historical_data[['Previous Close']].iloc[-1].values.reshape(1, -1)
     future_price_prediction = model.predict(future_data)[0]
 
     accuracy_percentage = r2 * 100
 
+    # Investment suggestion
     if future_price_prediction > historical_data['Close'].iloc[-1]:
         investment_suggestion = "It is suggested to consider investing in the stock."
     else:
         investment_suggestion = "It is suggested to not invest in the stock."
 
+    # Plot the data
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(historical_data.index, historical_data['Close'], label='Historical Closing Prices')
+    ax.axvline(x=historical_data.index[-1], color='r', linestyle='--', linewidth=1, label='End of Historical Data')
+    ax.axhline(y=future_price_prediction, color='g', linestyle='--', linewidth=1, label='Predicted Future Price')
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Closing Price')
+    ax.set_title('Historical Closing Prices and Predicted Future Price')
+    ax.legend()
+    ax.grid(True)
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(historical_data.index, historical_data['Close'], label='Historical Closing Prices')
-    plt.axvline(x=historical_data.index[-1], color='r', linestyle='--', linewidth=1, label='End of Historical Data')
-    plt.axhline(y=future_price_prediction, color='g', linestyle='--', linewidth=1, label='Predicted Future Price')
-    plt.xlabel('Date')
-    plt.ylabel('Closing Price')
-    plt.title('Historical Closing Prices and Predicted Future Price')
-    plt.legend()
-    plt.grid(True)
-    st.pyplot()
+    # Show the plot
+    st.pyplot(fig)
 
+    # Display predictions and suggestions
     st.write(f"Predicted Future Price: {future_price_prediction}")
     st.write(f"Accuracy of the model: {accuracy_percentage:.2f}%")
     st.write(investment_suggestion)
-
 
 st.sidebar.title('Stock Price Prediction')
 com_prediction = st.sidebar.selectbox("Select the official name of the company for prediction:", equity_list['NAME OF COMPANY'], key="prediction_company_selectbox")
